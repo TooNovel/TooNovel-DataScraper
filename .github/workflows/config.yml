@@ -3,7 +3,7 @@ name: 'TooNovel-DataScraper'
 
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 16 * * *'
 
 jobs:
   scrape:
@@ -22,7 +22,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Remove Chrome
-        run: sudo apt purge google-chrome-stable
+      run: sudo apt purge google-chrome-stable
 
     - name: Remove default Chromium
       run: sudo apt purge chromium-browser
@@ -32,7 +32,9 @@ jobs:
 
     - name: Run main.py
       run: |
-        python main.py
+        python recentMunpiaCrawler.py
+        python recentPageCrawlerTest.py
+        python recentSeriesCrawler.py
 
     - name: Run recentDBInsert.py
       run: |
