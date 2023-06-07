@@ -1,0 +1,45 @@
+name: 'TooNovel-DataScraper'
+
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Remove Chrome
+        run: sudo apt purge google-chrome-stable
+
+    - name: Remove default Chromium
+      run: sudo apt purge chromium-browser
+
+    - name: Install a new Chromium
+      run: sudo apt install -y chromium-browser
+
+    - name: Run main.py
+      run: |
+        python main.py
+
+    - name: Run recentDBInsert.py
+      run: |
+        python recentDBInsert.py
+      env:
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_URL: ${{ secrets.DB_URL }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+    
