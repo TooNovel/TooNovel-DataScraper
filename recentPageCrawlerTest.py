@@ -48,7 +48,10 @@ driver.get("https://page.kakao.com/menu/10000/screen/50?category_uid=11")
 driver.implicitly_wait(10)
 
 while True:
-  count = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-small2.text-el-40.css-1797ph-Text').text
+  try:
+    count = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-small2.text-el-40.css-1797ph-Text').text
+  except:
+    count = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-small2.text-el-40.css-0').text
   count = int(re.findall(r'\d+', count)[0])
   print(count)
   for i in range(1,count+1):
@@ -62,14 +65,10 @@ while True:
       except:
         url = driver.find_element(By.CSS_SELECTOR, f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.w-full.overflow-hidden > div > div > div > a').get_attribute('href')
         print(url)
-      try:
-        img = driver.find_element(By.CSS_SELECTOR, f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.w-full.overflow-hidden > div > div:nth-child({i}) > div > a > div > div.relative.rounded-8pxr.overflow-hidden.w-full.h-full.css-1dbppub-Image > img').get_attribute('src')
-        print(img)
-      except:
-        img = driver.find_element(By.CSS_SELECTOR, f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.w-full.overflow-hidden > div > div > div > a > div > div.relative.rounded-8pxr.overflow-hidden.w-full.h-full.css-1dbppub-Image > img').get_attribute('src')
-        print(img)
       driver.get(url)
       try:
+        img = driver.find_element(By.CSS_SELECTOR, f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.w-320pxr.css-0 > div > div.absolute.top-0.left-0.overflow-hidden.h-320pxr.w-320pxr > img').get_attribute('src')
+        print(img)
         title = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.w-320pxr.css-0 > div > div.css-0 > div.relative.text-center.mx-32pxr.py-24pxr > span').text
         title = re.sub(r"\s*\[.*?\]\s*", "", title)
         print("제목 : "+title)
