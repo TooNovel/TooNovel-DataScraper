@@ -30,11 +30,9 @@ driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 seoul_timezone = timezone('Asia/Seoul')
 current_date = datetime.now(seoul_timezone).date()
-print(current_date)
 
 formatted_date = current_date.strftime("%Y.%m.%d.").strip()
 date = current_date.strftime("%Y%m%d").strip()
-print(formatted_date)
 
 list = []
 
@@ -59,35 +57,26 @@ while True:
     if date_part == formatted_date:
       found_match = True
       url = driver.find_element(By.CSS_SELECTOR, f'#content > div > ul > li:nth-child({i}) > a').get_attribute('href')
-      print(url)
       img = driver.find_element(By.CSS_SELECTOR, f'#content > div > ul > li:nth-child({i}) > a > img').get_attribute('src')
-      print(img)
       if(img == 'https://ssl.pstatic.net/static/nstore/thumb/19over_book2_79x119.gif'):
-        print('성인')
         continue
       else:
         driver.get(url)
         title = driver.find_element(By.CSS_SELECTOR,'#content > div.end_head > h2').text
         title = re.sub(r"\s*\[.*?\]\s*", "", title)
-        print("제목 : "+title)
         author = driver.find_element(By.CSS_SELECTOR,'#content > ul.end_info.NE\=a\:nvi > li > ul > li:nth-child(3) > a').text
-        print("작가 : "+author)
         genre = driver.find_element(By.CSS_SELECTOR,'#content > ul.end_info.NE\=a\:nvi > li > ul > li:nth-child(2) > span > a').text
-        print("장르 : "+genre)
         try:
           img = driver.find_element(By.CSS_SELECTOR, '#container > div.aside.NE\=a\:nvi > span > img').get_attribute('src')
         except:
           img = driver.find_element(By.CSS_SELECTOR, '#container > div.aside.NE\=a\:nvi > a > img').get_attribute('src')
-        print("이미지 : "+img)
         try:
           driver.find_element(By.CSS_SELECTOR,'#content > div.end_dsc > div:nth-child(1) > span > a').click()
           description = driver.find_element(By.CSS_SELECTOR, '#content > div.end_dsc.open > div:nth-child(2)').text.replace('\n',' ').replace('접기','')
           description = description.lstrip('=')
-          print("소개 : " + description)
         except:
           description = driver.find_element(By.CSS_SELECTOR,'#content > div.end_dsc > div').text.replace('\n',' ')
           description = description.lstrip('=')
-          print("소개 : " + description)
 
         if "로판" in genre:
             genre = "ROMANCE_FANTASY"
@@ -118,6 +107,5 @@ while True:
 
         
 df = pd.DataFrame(list, columns = ('제목', '작가', '소개', '장르', '이미지', '링크'))
-print(df.head(6))
 
 df.to_csv(date+'series.csv', encoding = 'utf-8-sig', mode = 'w', index = False)

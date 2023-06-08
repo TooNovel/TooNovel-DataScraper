@@ -14,7 +14,6 @@ cnx = mysql.connector.connect(user=user, password=password, host=host, database=
 seoul_timezone = timezone('Asia/Seoul')
 current_date = datetime.now(seoul_timezone).date()
 date = current_date.strftime("%Y%m%d").strip()
-print(date)
 mycursor = cnx.cursor()
 
 mycursor.execute("ALTER TABLE novel MODIFY created_date DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)")
