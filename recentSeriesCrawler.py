@@ -51,9 +51,13 @@ found_match = False
 while True:
   found_match = False
   for i in range(1,26):
-    today = driver.find_element(By.CSS_SELECTOR,f'#content > div > ul > li:nth-child({i}) > div > p.info').text
-    split_parts = today.split("|")
-    date_part = split_parts[2].strip()
+    try:
+      today = driver.find_element(By.CSS_SELECTOR,f'#content > div > ul > li:nth-child({i}) > div > p.info').text
+      split_parts = today.split("|")
+      date_part = split_parts[2].strip()
+    except:
+      found_match = False
+      break
     if date_part == formatted_date:
       found_match = True
       url = driver.find_element(By.CSS_SELECTOR, f'#content > div > ul > li:nth-child({i}) > a').get_attribute('href')
@@ -100,9 +104,9 @@ while True:
         driver.back()
     else:
       continue
-  driver.find_element(By.CSS_SELECTOR, '#content > p > span.next > a').click()
   if not found_match:
     break
+  driver.find_element(By.CSS_SELECTOR, '#content > p > span.next > a').click()
 
 
         
