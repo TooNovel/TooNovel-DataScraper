@@ -11,9 +11,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 
-chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
-
 chrome_options = Options()
+chrome_options.binary_location = '/usr/bin/chromium'
 
 options = [
     "--headless",
@@ -28,9 +27,7 @@ options = [
 for option in options:
     chrome_options.add_argument(option)
 
-chrome_options.binary_location = '/usr/bin/chromium'    
-    
-    
+chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 seoul_timezone = timezone('Asia/Seoul')
