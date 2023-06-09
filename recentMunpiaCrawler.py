@@ -12,7 +12,6 @@ from selenium.webdriver.chrome.service import Service
 
 
 chrome_options = Options()
-chrome_options.binary_location = '/usr/bin/chromium'
 
 options = [
     "--headless",
