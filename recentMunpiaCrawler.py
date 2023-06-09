@@ -28,6 +28,9 @@ options = [
 for option in options:
     chrome_options.add_argument(option)
 
+chrome_options.binary_location = '/usr/bin/chromium'    
+    
+    
 driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 seoul_timezone = timezone('Asia/Seoul')
