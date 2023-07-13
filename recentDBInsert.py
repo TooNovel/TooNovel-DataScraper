@@ -25,7 +25,9 @@ def execute_query(cnx, sql, val):
     cursor = cnx.cursor()
     cursor.execute(sql, val)
     cnx.commit()
+    novel_id = cursor.lastrowid
     cursor.close()
+    return novel_id
 
 def fetch_one(cnx, sql, val):
     cursor = cnx.cursor()
@@ -44,8 +46,7 @@ def fetch_all(cnx, sql, val):
 def insert_novel(cnx, title, author, description, genre, image, user_id):
     sql = "INSERT INTO novel (title, author, description, genre, image, user_id) VALUES (%s, %s, %s, %s, %s, %s)"
     val = (title, author, description, genre, image, user_id)
-    execute_query(cnx, sql, val)
-    return cnx.cursor().lastrowid
+    return execute_query(cnx, sql, val)
 
 def insert_novel_platform(cnx, novel_id, platform_id, url):
     sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
