@@ -47,13 +47,13 @@ driver.implicitly_wait(10)
 
 while True:
   try:
-    count = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-small2.text-el-40.css-1797ph-Text').text
+    count = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-small2.text-el-40').text
     count = int(re.findall(r'\d+', count)[0])
   except:
     count = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-small2.text-el-40.css-0').text
     count = int(re.findall(r'\d+', count)[0])
   for i in range(1,count+1):
-    today = driver.find_element(By.CSS_SELECTOR,f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-medium1-bold.text-el-60.css-1797ph-Text').text
+    today = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.mb-4pxr.flex.h-44pxr.w-full.justify-between.px-4pxr.pt-15pxr.pb-7pxr > span.font-medium1-bold.text-el-60').text
     if today == 'TODAY':
       try:
         url = driver.find_element(By.CSS_SELECTOR, f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.w-full.overflow-hidden > div > div:nth-child({i}) > div > a').get_attribute('href')
@@ -61,11 +61,11 @@ while True:
         url = driver.find_element(By.CSS_SELECTOR, f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div > div.flex.grow.flex-col > div.mb-4pxr.flex-col > div > div:nth-child(3) > div.w-full.overflow-hidden > div > div > div > a').get_attribute('href')
       driver.get(url)
       try:
-        img = driver.find_element(By.CSS_SELECTOR, f'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.w-320pxr.css-0 > div > div.css-0 > div.mx-auto.css-1cyn2un-ContentOverviewThumbnail > div > div > img').get_attribute('src')
-        title = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.w-320pxr.css-0 > div > div.css-0 > div.relative.text-center.mx-32pxr.py-24pxr > span').text
+        img = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.jsx-1469927737.jsx-1458499084.jsx-2778911690.w-320pxr > div > div.jsx-1469927737.jsx-1458499084.jsx-2778911690.absolute.top-0.left-0.overflow-hidden.h-320pxr.w-320pxr > img').get_attribute('src')
+        title = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.jsx-1469927737.jsx-1458499084.jsx-2778911690.w-320pxr > div > div:nth-child(3) > div.relative.text-center.mx-32pxr.py-24pxr > span').text
         title = re.sub(r"\s*\[.*?\]\s*", "", title)
-        author = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.w-320pxr.css-0 > div > div.css-0 > div.relative.text-center.mx-32pxr.py-24pxr > div:nth-child(2) > div.flex.items-center.justify-center.mt-4pxr.flex-col.text-el-50.opacity-100.all-child\:font-small2 > div.mt-4pxr > span').text
-        genre = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.w-320pxr.css-0 > div > div.css-0 > div.relative.text-center.mx-32pxr.py-24pxr > div:nth-child(2) > div.flex.items-center.justify-center.mt-16pxr.text-el-60.all-child\:font-small2 > span:nth-child(9)').text
+        author = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.jsx-1469927737.jsx-1458499084.jsx-2778911690.w-320pxr > div > div:nth-child(3) > div.relative.text-center.mx-32pxr.py-24pxr > div:nth-child(2) > div.flex.items-center.justify-center.mt-4pxr.flex-col.text-el-50.opacity-100.all-child\:font-small2 > div > span').text
+        genre = driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.flex.w-320pxr.flex-col > div:nth-child(1) > div.jsx-1469927737.jsx-1458499084.jsx-2778911690.w-320pxr > div > div:nth-child(3) > div.relative.text-center.mx-32pxr.py-24pxr > div:nth-child(2) > div.flex.items-center.justify-center.mt-16pxr.text-el-60.all-child\:font-small2 > span:nth-child(9)').text
         driver.find_element(By.CSS_SELECTOR,'#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.ml-4px.flex.w-632pxr.flex-col > div.relative.flex.w-full.flex-col.my-0.bg-bg-a-20.px-15pxr.pt-28pxr.pb-12pxr > div > div > div:nth-child(2) > a').click()
         description = driver.find_element(By.CSS_SELECTOR, '#__next > div > div.flex.w-full.grow.flex-col.px-122pxr > div.flex.h-full.flex-1 > div.mb-28pxr.ml-4px.flex.w-632pxr.flex-col > div.flex-1.bg-bg-a-20 > div.text-el-60.break-keep.py-20pxr.pt-31pxr.pb-32pxr > span').text.replace('\n',' ')
         description = description.lstrip('=')
