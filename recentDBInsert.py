@@ -8,118 +8,132 @@ user = os.environ['DB_USERNAME']
 password = os.environ['DB_PASSWORD']
 host = os.environ['DB_URL']
 port = os.environ['DB_PORT']
-database = "toonovel"
+
+cnx = mysql.connector.connect(user=user, password=password, host=host, database='toonovel', port=port)
 
 seoul_timezone = timezone('Asia/Seoul')
 current_date = datetime.now(seoul_timezone).date()
 date = current_date.strftime("%Y%m%d").strip()
+mycursor = cnx.cursor()
 
+mycursor.execute("ALTER TABLE novel MODIFY created_date DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)")
+mycursor.execute("ALTER TABLE novel MODIFY modified_date DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)")
+cnx.commit()
 
-def connect_to_database():
-    return mysql.connector.connect(user=user, password=password, host=host, database=database, port=port)
+munpia_df = pd.read_csv(date+'munpia.csv', encoding='utf-8')
 
-def close_connection(cnx):
-    cnx.close()
+title = munpia_df['제목'].tolist()
+author = munpia_df['작가'].tolist()
+description = munpia_df['소개'].tolist()
+genre = munpia_df['장르'].tolist()
+url = munpia_df['링크'].tolist()
+image = munpia_df['이미지'].tolist()
 
-def execute_query(cnx, sql, val):
-    cursor = cnx.cursor()
-    cursor.execute(sql, val)
-    cnx.commit()
-    novel_id = cursor.lastrowid
-    cursor.close()
-    return novel_id
+for v in range(len(munpia_df)):
+    sql = "SELECT novel_id FROM novel WHERE title = %s AND author = %s"
+    val = (title[v], author[v])
+    mycursor.execute(sql, val)
+    result = mycursor.fetchone()
 
-def fetch_one(cnx, sql, val):
-    cursor = cnx.cursor()
-    cursor.execute(sql, val)
-    result = cursor.fetchone()
-    cursor.close()
-    return result
+    if result is None:
+        sql = "INSERT INTO novel (title, author, description, genre, image) VALUES (%s, %s, %s, %s, %s)"
+        val = (title[v], author[v], description[v], genre[v], image[v])
+        mycursor.execute(sql, val)
+        cnx.commit()
+        novel_id = mycursor.lastrowid
+        sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
+        val = (novel_id, 3, url[v])
+        mycursor.execute(sql, val)
+        cnx.commit()
+    else:
+        novel_id = result[0]
+        sql = "SELECT * FROM novel_platform WHERE novel_id = %s AND platform_id = 3"
+        val = (novel_id,)
+        mycursor.execute(sql, val)
+        result = mycursor.fetchall()
 
-def fetch_all(cnx, sql, val):
-    cursor = cnx.cursor()
-    cursor.execute(sql, val)
-    result = cursor.fetchall()
-    cursor.close()
-    return result
+        if not result:
+            sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
+            val = (novel_id, 3, url[v])
+            mycursor.execute(sql, val)
+            cnx.commit()  
 
-def insert_novel(cnx, title, author, description, genre, image, user_id):
-    sql = "INSERT INTO novel (title, author, description, genre, image, user_id) VALUES (%s, %s, %s, %s, %s, %s)"
-    val = (title, author, description, genre, image, user_id)
-    return execute_query(cnx, sql, val)
+kakao_df = pd.read_csv(date+'page.csv', encoding='utf-8')
 
-def insert_novel_platform(cnx, novel_id, platform_id, url):
-    sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
-    val = (novel_id, platform_id, url)
-    execute_query(cnx, sql, val)
+title = kakao_df['제목'].tolist()
+author = kakao_df['작가'].tolist()
+description = kakao_df['소개'].tolist()
+genre = kakao_df['장르'].tolist()
+url = kakao_df['링크'].tolist()
+image = kakao_df['이미지'].tolist()
 
-def update_novel_genre(cnx, novel_id, genre):
-    sql = "UPDATE novel SET genre = %s WHERE novel_id = %s"
-    val = (genre, novel_id)
-    execute_query(cnx, sql, val)
+for v in range(len(kakao_df)):
+    sql = "SELECT novel_id FROM novel WHERE title = %s AND author = %s"
+    val = (title[v], author[v])
+    mycursor.execute(sql, val)
+    result = mycursor.fetchone()
 
-def import_csv(cnx, csv, platform_id):
-    df = pd.read_csv(csv, encoding='utf-8')
+    if result is None:
+        sql = "INSERT INTO novel (title, author, description, genre, image) VALUES (%s, %s, %s, %s, %s)"
+        val = (title[v], author[v], description[v], genre[v], image[v])
+        mycursor.execute(sql, val)
+        cnx.commit()
+        novel_id = mycursor.lastrowid
+        sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
+        val = (novel_id, 2, url[v])
+        mycursor.execute(sql, val)
+        cnx.commit()
+    else:
+        novel_id = result[0]
+        sql = "SELECT * FROM novel_platform WHERE novel_id = %s AND platform_id = 2"
+        val = (novel_id,)
+        mycursor.execute(sql, val)
+        result = mycursor.fetchall()
 
-    titles = df['제목'].tolist()
-    authors = df['작가'].tolist()
-    descriptions = df['소개'].tolist()
-    genres = df['장르'].tolist()
-    urls = df['링크'].tolist()
-    images = df['이미지'].tolist()
+        if not result:
+            sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
+            val = (novel_id, 2, url[v])
+            mycursor.execute(sql, val)
+            cnx.commit()
 
-    sql = "SELECT user_id, nickname FROM enroll_history WHERE is_approval = 1"
-    enroll_history_result = fetch_all(cnx, sql, None)
+naver_df = pd.read_csv(date+'series.csv', encoding='utf-8')
 
-    enroll_data = {nickname: user_id for user_id, nickname in enroll_history_result}
+title = naver_df['제목'].tolist()
+author = naver_df['작가'].tolist()
+description = naver_df['소개'].tolist()
+genre = naver_df['장르'].tolist()
+url = naver_df['링크'].tolist()
+image = naver_df['이미지'].tolist()
 
-    for i in range(len(df)):
-        title = titles[i]
-        author = authors[i]
-        description = descriptions[i]
-        genre = genres[i]
-        url = urls[i]
-        image = images[i]
-        user_id = enroll_data.get(author)
+for v in range(len(naver_df)):
+    sql = "SELECT novel_id FROM novel WHERE title = %s AND author = %s"
+    val = (title[v], author[v])
+    mycursor.execute(sql, val)
+    result = mycursor.fetchone()
 
-        sql = "SELECT novel_id FROM novel WHERE title = %s AND author = %s"
-        val = (title, author)
-        result = fetch_one(cnx, sql, val)
+    if result is None:
+        sql = "INSERT INTO novel (title, author, description, genre, image) VALUES (%s, %s, %s, %s, %s)"
+        val = (title[v], author[v], description[v], genre[v], image[v])
+        mycursor.execute(sql, val)
+        cnx.commit()
+        novel_id = mycursor.lastrowid
+        sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
+        val = (novel_id, 1, url[v])
+        mycursor.execute(sql, val)
+        cnx.commit()
+    else:
+        novel_id = result[0]
+        sql = "SELECT * FROM novel_platform WHERE novel_id = %s AND platform_id = 1"
+        val = (novel_id,)
+        mycursor.execute(sql, val)
+        result = mycursor.fetchall()
 
-        if result is None:
-            novel_id = insert_novel(cnx, title, author, description, genre, image, user_id)
-            insert_novel_platform(cnx, novel_id, platform_id, url)
-        else:
-            novel_id = result[0]
-            sql = "SELECT * FROM novel_platform WHERE novel_id = %s AND platform_id = %s"
-            val = (novel_id, platform_id)
-            result = fetch_all(cnx, sql, val)
-
-            if not result:
-                insert_novel_platform(cnx, novel_id, platform_id, url)
-            else:
-                insert_novel_platform(cnx, novel_id, platform_id, url)
-                # 네이버 시리즈 데이터 삽입에만 작동, 시리즈 기준으로 장르 맞추기위함
-                if platform_id == 1:
-                    update_novel_genre(cnx, novel_id, genre)
-
-try:
-    cnx = connect_to_database()
-
-    mycursor = cnx.cursor()
-    mycursor.execute("ALTER TABLE novel MODIFY created_date DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)")
-    mycursor.execute("ALTER TABLE novel MODIFY modified_date DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)")
-    cnx.commit()
-    mycursor.close()
-
-    munpia_csv = date + 'munpia.csv'
-    import_csv(cnx, munpia_csv, 3)
-
-    kakao_csv = date + 'page.csv'
-    import_csv(cnx, kakao_csv, 2)
-
-    naver_csv = date + 'series.csv'
-    import_csv(cnx, naver_csv, 1)
-
-finally:
-    close_connection(cnx)
+        if not result:
+            sql = "UPDATE novel SET genre = %s WHERE novel_id = %s"
+            val = (genre[v], novel_id)
+            mycursor.execute(sql, val)
+            cnx.commit()
+            sql = "INSERT INTO novel_platform (novel_id, platform_id, url) VALUES (%s, %s, %s)"
+            val = (novel_id, 1, url[v])
+            mycursor.execute(sql, val)
+            cnx.commit()
