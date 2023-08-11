@@ -3,8 +3,8 @@ name: 'TooNovel-DataScraper'
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '25 14 * * *'
+  #schedule:
+  # - cron: '25 14 * * *'
 
 jobs:
   scrape:
